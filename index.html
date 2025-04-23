@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Full Screen với Mật khẩu</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
+    }
+    #linkImage {
+      cursor: pointer;
+      width: 200px; /* Tùy chỉnh kích thước ảnh */
+      height: auto;
+      border: 2px solid white;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+      padding-top: 20vh;
+    }
+    input {
+      font-size: 1rem;
+      padding: 8px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 8px 12px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Link ảnh, khi bấm vào sẽ mở video -->
+  <img id="linkImage" src="your-image.jpg" alt="Click to watch" onclick="startFullScreenVideo()">
+
+  <div id="overlay">
+    <p>Nhập mật khẩu để thoát:</p>
+    <input type="password" id="passwordInput" placeholder="Mật khẩu">
+    <button onclick="checkPassword()">OK</button>
+    <p id="message" style="color: red;"></p>
+  </div>
+
+  <audio id="scarySound" src="https://www.myinstants.com/media/sounds/movie_1.mp3"></audio>
+
+  <script>
+    const correctPassword = "123456"; // Mật khẩu
+
+    // Khi người dùng bấm vào ảnh, mở video và chế độ full màn hình
+    function startFullScreenVideo() {
+      // Chuyển toàn màn hình
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+
+      // Tạo video mới và phát video
+      const video = document.createElement("video");
+      video.src = "video.mp4";  // Đường dẫn tới video
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = false;  // Video sẽ phát có âm thanh
+      document.body.appendChild(video);
+
+      // Hiển thị overlay và âm thanh kinh dị
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("scarySound").play();
+    }
+
+    // Kiểm tra mật khẩu
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      const message = document.getElementById("message");
+      if (input === correctPassword) {
+        message.textContent = "";
+        document.exitFullscreen();
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("passwordInput").value = "";
+        // Hủy video khi thoát
+        document.querySelector("video").remove();
+      } else {
+        message.textContent = "Sai mật khẩu. Vui lòng thử lại.";
+      }
+    }
+  </script>
+</body>
+</html>
